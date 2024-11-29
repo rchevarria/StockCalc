@@ -7,141 +7,151 @@
 
 import UIKit
 
-import UIKit
-
 class ProfitViewController: UIViewController {
-
-    var sharePriceField: UITextField!
+    
     var numSharesField: UITextField!
-    var expectedPriceField: UITextField!
+    var buyingPriceField: UITextField!
+    var sellingPriceField: UITextField!
+    var buyingCommissionField: UITextField!
+    var sellingCommissionField: UITextField!
+    var commissionTypeSwitch: UISegmentedControl!
     var resultLabel: UILabel!
     var calculateButton: UIButton!
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Set up the UI components
         setupUI()
     }
-
+    
     func setupUI() {
-        // Background Color
-        view.backgroundColor = UIColor.systemBackground
+        view.backgroundColor = .systemBackground
         
-        // 1. Set up Share Price Field
-        sharePriceField = UITextField()
-        sharePriceField.placeholder = "Enter current share price"
-        sharePriceField.borderStyle = .roundedRect
-        sharePriceField.keyboardType = .decimalPad
-        sharePriceField.layer.borderColor = UIColor.systemGray5.cgColor
-        sharePriceField.layer.borderWidth = 1.0
-        sharePriceField.layer.cornerRadius = 8
-        sharePriceField.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(sharePriceField)
-        
-        // 2. Set up Number of Shares Field
-        numSharesField = UITextField()
-        numSharesField.placeholder = "Enter number of shares"
-        numSharesField.borderStyle = .roundedRect
-        numSharesField.keyboardType = .numberPad
-        numSharesField.layer.borderColor = UIColor.systemGray5.cgColor
-        numSharesField.layer.borderWidth = 1.0
-        numSharesField.layer.cornerRadius = 8
-        numSharesField.translatesAutoresizingMaskIntoConstraints = false
+        // 1. Number of Shares
+        numSharesField = createTextField(placeholder: "Number of Shares", keyboardType: .numberPad)
         view.addSubview(numSharesField)
         
-        // 3. Set up Expected Price Field
-        expectedPriceField = UITextField()
-        expectedPriceField.placeholder = "Enter expected share price"
-        expectedPriceField.borderStyle = .roundedRect
-        expectedPriceField.keyboardType = .decimalPad
-        expectedPriceField.layer.borderColor = UIColor.systemGray5.cgColor
-        expectedPriceField.layer.borderWidth = 1.0
-        expectedPriceField.layer.cornerRadius = 8
-        expectedPriceField.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(expectedPriceField)
+        // 2. Buying Price
+        buyingPriceField = createTextField(placeholder: "Buying Price", keyboardType: .decimalPad)
+        view.addSubview(buyingPriceField)
         
-        // 4. Set up Result Label
+        // 3. Selling Price
+        sellingPriceField = createTextField(placeholder: "Selling Price", keyboardType: .decimalPad)
+        view.addSubview(sellingPriceField)
+        
+        // 4. Buying Commission
+        buyingCommissionField = createTextField(placeholder: "Buying Commission (default 0)", keyboardType: .decimalPad)
+        view.addSubview(buyingCommissionField)
+        
+        // 5. Selling Commission
+        sellingCommissionField = createTextField(placeholder: "Selling Commission (default 0)", keyboardType: .decimalPad)
+        view.addSubview(sellingCommissionField)
+        
+        // Commission Type Switch
+        commissionTypeSwitch = UISegmentedControl(items: ["Percentage", "Amount"])
+        commissionTypeSwitch.selectedSegmentIndex = 0 // Default to Percentage
+        commissionTypeSwitch.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(commissionTypeSwitch)
+        
+        // Result Label
         resultLabel = UILabel()
         resultLabel.text = "Result will appear here"
         resultLabel.textAlignment = .center
         resultLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
-        resultLabel.textColor = UIColor.systemGray
+        resultLabel.textColor = .systemGray
         resultLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(resultLabel)
         
-        // 5. Set up Calculate Button
+        // Calculate Button
         calculateButton = UIButton(type: .system)
         calculateButton.setTitle("Calculate Profit", for: .normal)
-        calculateButton.backgroundColor = UIColor.systemBlue
+        calculateButton.backgroundColor = .systemBlue
         calculateButton.setTitleColor(.white, for: .normal)
         calculateButton.layer.cornerRadius = 8
         calculateButton.translatesAutoresizingMaskIntoConstraints = false
         calculateButton.addTarget(self, action: #selector(calculateProfitTapped), for: .touchUpInside)
         view.addSubview(calculateButton)
         
-        // 6. Set up Auto Layout Constraints
         setupConstraints()
     }
-
+    
+    func createTextField(placeholder: String, keyboardType: UIKeyboardType) -> UITextField {
+        let textField = UITextField()
+        textField.placeholder = placeholder
+        textField.borderStyle = .roundedRect
+        textField.keyboardType = keyboardType
+        textField.layer.borderColor = UIColor.systemGray5.cgColor
+        textField.layer.borderWidth = 1.0
+        textField.layer.cornerRadius = 8
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        return textField
+    }
+    
     func setupConstraints() {
-        // Set up constraints using NSLayoutConstraint
         NSLayoutConstraint.activate([
-            // Share Price Field
-            sharePriceField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
-            sharePriceField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            sharePriceField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            sharePriceField.heightAnchor.constraint(equalToConstant: 50),
-            
-            // Number of Shares Field
-            numSharesField.topAnchor.constraint(equalTo: sharePriceField.bottomAnchor, constant: 20),
+            numSharesField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             numSharesField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             numSharesField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             numSharesField.heightAnchor.constraint(equalToConstant: 50),
             
-            // Expected Price Field
-            expectedPriceField.topAnchor.constraint(equalTo: numSharesField.bottomAnchor, constant: 20),
-            expectedPriceField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            expectedPriceField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            expectedPriceField.heightAnchor.constraint(equalToConstant: 50),
+            buyingPriceField.topAnchor.constraint(equalTo: numSharesField.bottomAnchor, constant: 20),
+            buyingPriceField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            buyingPriceField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            buyingPriceField.heightAnchor.constraint(equalToConstant: 50),
             
-            // Calculate Button
-            calculateButton.topAnchor.constraint(equalTo: expectedPriceField.bottomAnchor, constant: 30),
+            sellingPriceField.topAnchor.constraint(equalTo: buyingPriceField.bottomAnchor, constant: 20),
+            sellingPriceField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            sellingPriceField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            sellingPriceField.heightAnchor.constraint(equalToConstant: 50),
+            
+            buyingCommissionField.topAnchor.constraint(equalTo: sellingPriceField.bottomAnchor, constant: 20),
+            buyingCommissionField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            buyingCommissionField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            buyingCommissionField.heightAnchor.constraint(equalToConstant: 50),
+            
+            sellingCommissionField.topAnchor.constraint(equalTo: buyingCommissionField.bottomAnchor, constant: 20),
+            sellingCommissionField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            sellingCommissionField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            sellingCommissionField.heightAnchor.constraint(equalToConstant: 50),
+            
+            commissionTypeSwitch.topAnchor.constraint(equalTo: sellingCommissionField.bottomAnchor, constant: 20),
+            commissionTypeSwitch.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            calculateButton.topAnchor.constraint(equalTo: commissionTypeSwitch.bottomAnchor, constant: 30),
             calculateButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             calculateButton.heightAnchor.constraint(equalToConstant: 50),
-            calculateButton.widthAnchor.constraint(equalTo: sharePriceField.widthAnchor),
+            calculateButton.widthAnchor.constraint(equalTo: numSharesField.widthAnchor),
             
-            // Result Label
             resultLabel.topAnchor.constraint(equalTo: calculateButton.bottomAnchor, constant: 30),
             resultLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             resultLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])
     }
-
-    // Profit Estimation Function
-    func estimateProfit(sharePrice: Double, numShares: Int, expectedPrice: Double) -> Double {
-        return (expectedPrice - sharePrice) * Double(numShares)
-    }
-
-    // Button Action Method
+    
     @objc func calculateProfitTapped() {
-        // Ensure that textfields have valid values
-        guard let sharePriceText = sharePriceField.text,
-              let numSharesText = numSharesField.text,
-              let expectedPriceText = expectedPriceField.text,
-              let sharePrice = Double(sharePriceText),
+        guard let numSharesText = numSharesField.text,
+              let buyingPriceText = buyingPriceField.text,
+              let sellingPriceText = sellingPriceField.text,
               let numShares = Int(numSharesText),
-              let expectedPrice = Double(expectedPriceText) else {
+              let buyingPrice = Double(buyingPriceText),
+              let sellingPrice = Double(sellingPriceText) else {
             resultLabel.text = "Please enter valid inputs!"
             resultLabel.textColor = .red
             return
         }
         
-        // Calculate profit
-        let profit = estimateProfit(sharePrice: sharePrice, numShares: numShares, expectedPrice: expectedPrice)
+        let buyingCommission = Double(buyingCommissionField.text ?? "0") ?? 0
+        let sellingCommission = Double(sellingCommissionField.text ?? "0") ?? 0
+        let isPercentage = commissionTypeSwitch.selectedSegmentIndex == 0
         
-        // Display result
+        let totalBuyingCommission = isPercentage ? buyingCommission / 100 * buyingPrice * Double(numShares) : buyingCommission
+        let totalSellingCommission = isPercentage ? sellingCommission / 100 * sellingPrice * Double(numShares) : sellingCommission
+        
+        let profit = (sellingPrice * Double(numShares) - totalSellingCommission) -
+                     (buyingPrice * Double(numShares) + totalBuyingCommission)
+        
         resultLabel.textColor = profit >= 0 ? .green : .red
         resultLabel.text = String(format: "Your profit will be: $%.2f", profit)
     }
 }
+
+
